@@ -1,7 +1,7 @@
 <?php
-//Allow the config
-define('CONFIG',true);
-//require the config
-require_once "DB_config/config.php";
+// If there is no constant defined called __CONFIG__, do not load this
+// Include the DB.php file;
+include_once "DBconfig/DB.php";
+$con = DB::getConnection();
     echo "Add a new Project";
 ?>
