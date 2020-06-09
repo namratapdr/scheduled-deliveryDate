@@ -8,18 +8,19 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 		<style>
 		body {
-			margin : auto;
+			margin-top: 200px;
       text-align: center;
+      background-color: #7fdbff;
 		}
 
 		</style>
     <title>Projects</title>
   </head>
   <body>
-    <h1>Client XYZ</h1>
+    <h1>Client XYZ</h1><br><br>
 		<div class="container ">
-        <a class="btn btn-primary" href="#" role="button">Add Project</a><br><br>
-        <a class="btn btn-primary" href="#" role="button">View On-Going Projects</a>
+        <a class="btn btn-primary" href="addProject.php" role="button">Add Project</a><br><br>
+        <a class="btn btn-primary" href="onGoingProjects.php" role="button">View On-Going Projects</a>
 		</div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
