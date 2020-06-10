@@ -1,9 +1,12 @@
 <?php
-// If there is no constant defined called __CONFIG__, do not load this
+
+if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
+{
 // Include the DB.php file;
 include_once "DBconfig/DB.php";
 $con = DB::getConnection();
-
+echo "Connected";
+}
 ?>
 
 
@@ -53,17 +56,17 @@ $con = DB::getConnection();
         <div class="flexbox">
 
           <div class="flexbox-item">
-            <form>
+            <form method="post">
             <div class="form-group">
               <label for="topic_name">Enter Topic :</label>
-              <input type="text" class="form-control" id="topic_name" aria-describedby="TopicName">
+              <input name="topic" type="text" class="form-control" id="topic_name" placeholder="An understandable name for the topic" aria-describedby="TopicName" required>
             </div>
             <div class="form-group">
-              <label for="words_number">Enter Number of Words :</label>
-              <input type="number" class="form-control" id="words_number">
+              <label name="words_number" for="words_number">Enter Number of Words :</label>
+              <input type="number" class="form-control" id="words_number" placeholder="Eg: 50-1500" required>
             </div>
             <div class="form-group">
-              <label for="instructions">Additional Information/Instructions :</label>
+              <label name="instructions" for="instructions">Additional Information/Instructions :</label>
               <textarea class="form-control" id="instructions" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Add Project</button>
