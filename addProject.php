@@ -1,13 +1,31 @@
 <?php
 
-if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
-{
-// Include the DB.php file;
-include_once "DBconfig/DB.php";
-$con = DB::getConnection();
-echo "Connected";
-}
-?>
+    if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
+    {
+    // Include the DB.php file;
+    include_once "DBconfig/DB.php";
+    $con = DB::getConnection();
+    echo "Connected";
+      if($_POST['topic'] == "")
+  			echo "<p>Topic name is required</p>";
+  		else if($_POST['words_number'] == "")
+  			echo "<p>Number of words is required</p>";
+  		else
+  		{
+        $query = "SELECT `id` FROM `projects` WHERE `topic`='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+  			$result= mysqli_query($con,$query);
+        if(mysqli_num_rows($result)>0)
+  			{
+  				echo "<p>That topic already exists!</p>";
+
+  			}
+        else {
+
+                $query = "INSERT INTO `projects` (`topic`, `words_number`,`instructions`) VALUES ('".mysqli_real_escape_string($con, $_POST['topic'])."', '".mysqli_real_escape_string($con, $_POST['words_number'])."','".mysqli_real_escape_string($con, $_POST['instructions'])."')";
+              }
+      }
+    }
+    ?>
 
 
 <html lang="en">
