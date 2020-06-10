@@ -6,24 +6,33 @@
     include_once "DBconfig/DB.php";
     $con = DB::getConnection();
     echo "Connected";
-      if($_POST['topic'] == "")
-  			echo "<p>Topic name is required</p>";
-  		else if($_POST['words_number'] == "")
-  			echo "<p>Number of words is required</p>";
-  		else
-  		{
-        $query = "SELECT `id` FROM `projects` WHERE `topic`='".mysqli_real_escape_string($con,$_POST['topic'])."'";
-  			$result= mysqli_query($con,$query);
-        if(mysqli_num_rows($result)>0)
-  			{
-  				echo "<p>That topic already exists!</p>";
 
-  			}
-        else {
+      function deliveryDate($numberOfWords){
+            $totalNumberOfWords += $numberOfWords ;
+            $query = "SELECT `words_number` FROM `projects`";
+            $result = mysqli_query($con, $query);
 
-                $query = "INSERT INTO `projects` (`topic`, `words_number`,`instructions`) VALUES ('".mysqli_real_escape_string($con, $_POST['topic'])."', '".mysqli_real_escape_string($con, $_POST['words_number'])."','".mysqli_real_escape_string($con, $_POST['instructions'])."')";
-              }
-      }
+            if (mysqli_num_rows($result) > 0) {
+                while($row = mysqli_fetch_assoc($result)) {
+                      $totalNumberOfWords += $row[words_number];
+                }
+                echo "Total Number of Words:" . $totalNumberOfWords;
+            if ($totalNumberOfWords > 1000)
+            {
+              /*If total number of words for the client is more than 1000 then
+              the delivery date is scheduled for the next day*/
+              $date = date(j)+1;
+              $deliveryDate = $date."".date("S \of F Y") . "<br>";
+            }
+            else {
+              /*If total number of words for the client is less than 1000 then
+              the delivery date is scheduled for the same day*/
+              $date = date(j);
+              $deliveryDate = $date."".date("S \of F Y") . "<br>";
+            }
+            }
+            return $deliveryDate;
+        }
     }
     ?>
 
@@ -81,7 +90,7 @@
             </div>
             <div class="form-group">
               <label name="words_number" for="words_number">Enter Number of Words :</label>
-              <input type="number" class="form-control" id="words_number" placeholder="Eg: 50-1500" required>
+              <input type="number" class="form-control" id="words_number" placeholder="Eg: 1-1000" min="1" max="1000" required>
             </div>
             <div class="form-group">
               <label name="instructions" for="instructions">Additional Information/Instructions :</label>
@@ -89,6 +98,43 @@
             </div>
             <button type="submit" class="btn btn-primary">Add Project</button>
             </form>
+              <br>
+              <div>
+                <?php
+                if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
+                {
+                  if($_POST['topic'] == "")
+                    echo "<p>Topic name is required</p>";
+                  else if($_POST['words_number'] > 1000)
+                    echo "<div class="alert alert-danger" role="alert">
+                      <p>Mamximum Allowed words are 1000</p>
+                      </div>";
+                  else
+                  {
+                    $numberOfWords = $_POST['words_number'];
+                    $date = deliveryDate($numberOfWords);
+                    $query = "SELECT `id` FROM `projects` WHERE `topic`='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+                    $result= mysqli_query($con,$query);
+                    if(mysqli_num_rows($result)>0)
+                    {
+                      echo "<p>That topic already exists!</p>";
+
+                    }
+                    else {
+
+                            $query = "INSERT INTO `projects` (`topic`, `words_number`,`instructions`,`delivery_date`) VALUES
+                                      ('".mysqli_real_escape_string($con, $_POST['topic'])."', '$numberOfWords','".mysqli_real_escape_string($con, $_POST['instructions'])."','".mysqli_real_escape_string($con, $date)."')";
+                            if (mysqli_query($con, $query)) {
+                                echo "New Project added successfully";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+
+                          }
+                  }
+              }
+                 ?>
+              </div>
           </div>
 
         </div>
