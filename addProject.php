@@ -3,7 +3,7 @@
 // Include the DB.php file;
 include_once "DBconfig/DB.php";
 $con = DB::getConnection();
-    echo "Add a new Project";
+
 ?>
 
 
@@ -19,15 +19,28 @@ $con = DB::getConnection();
 		body {
 			margin: auto;
       text-align: center;
-      background-color: #7fdbff;
+      color: #034970;
+      background: #87e0fd;
+      background: -moz-linear-gradient(left,  #87e0fd 0%, #53cbf1 40%, #05abe0 100%);
+      background: -webkit-linear-gradient(left,  #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+      background: linear-gradient(to right,  #87e0fd 0%,#53cbf1 40%,#05abe0 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#87e0fd', endColorstr='#05abe0',GradientType=1 );
 		}
+    h1{
+      margin-top: 20px;
+    }
+
       .flexbox{
+
         display: flex;
+        justify-content: center;
         width:100%;
         height: 500px;
-        border: 1px solid grey;
+
       }
       .flexbox-item{
+        text-align: left;
+        width: 50%;
         margin: 10px;
         padding: 20px;
       }
@@ -36,7 +49,7 @@ $con = DB::getConnection();
   </head>
   <body>
     <h1>Client XYZ</h1><br><br>
-		<div class="container-flex">
+
         <div class="flexbox">
 
           <div class="flexbox-item">
@@ -50,16 +63,16 @@ $con = DB::getConnection();
               <input type="number" class="form-control" id="words_number">
             </div>
             <div class="form-group">
-              <label for="instructions">Example textarea</label>
+              <label for="instructions">Additional Information/Instructions :</label>
               <textarea class="form-control" id="instructions" rows="3"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Add Project</button>
             </form>
-          </di>
+          </div>
 
         </div>
 
-		</div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
