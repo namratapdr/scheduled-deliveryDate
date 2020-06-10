@@ -1,5 +1,5 @@
 <?php
-// If there is no constant defined called __CONFIG__, do not load this file
-require 'DBconfig/config.php';
+include_once "DBconfig/DB.php";
+$con = DB::getConnection();
     echo "View On-Going Projects";
 ?>
