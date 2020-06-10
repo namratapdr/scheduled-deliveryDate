@@ -106,7 +106,7 @@
                   if($_POST['topic'] == "")
                     echo "<p>Topic name is required</p>";
                   else if($_POST['words_number'] > 1000)
-                    echo "<div class="alert alert-danger" role="alert">
+                    echo "<div class='alert alert-danger' role='alert'>
                       <p>Mamximum Allowed words are 1000</p>
                       </div>";
                   else
@@ -125,9 +125,13 @@
                             $query = "INSERT INTO `projects` (`topic`, `words_number`,`instructions`,`delivery_date`) VALUES
                                       ('".mysqli_real_escape_string($con, $_POST['topic'])."', '$numberOfWords','".mysqli_real_escape_string($con, $_POST['instructions'])."','".mysqli_real_escape_string($con, $date)."')";
                             if (mysqli_query($con, $query)) {
-                                echo "New Project added successfully";
+                                echo "<div class='alert alert-success' role='alert'>
+                                    <p>  New Project added successfully </p>
+                                    </div>";
                               } else {
-                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                                echo "<div class='alert alert-danger' role='alert'>
+                                  <p>Error: " . $query . "<br>" . mysqli_error($con)."</p>
+                                  </div>";
                               }
 
                           }
