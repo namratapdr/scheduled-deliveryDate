@@ -1,39 +1,108 @@
 <?php
 
-    if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
+    if(array_key_exists('topic',$_POST) OR array_key_exists('wordsNumber',$_POST))
     {
-    // Include the DB.php file;
-    include_once "DBconfig/DB.php";
-    $con = DB::getConnection();
-    echo "Connected";
+    // Include the DB Connection file
+    include_once "DBconfig/connection.php";
+    echo "Connected <br>";
+	
 
-      function deliveryDate($numberOfWords){
-            $totalNumberOfWords += $numberOfWords ;
-            $query = "SELECT `words_number` FROM `projects`";
-            $result = mysqli_query($con, $query);
-
+	/*a function to calculate the expected 
+	delivery date based on the company's restrictions*/
+	
+	
+   function deliveryDate($numberOfWords){
+            
+			include "DBconfig/connection.php";
+            echo "Total Number of Words: $numberOfWords <br>";
+			
+			
+			$query = "SELECT `wordsNumber` FROM `projects`";
+			$result = mysqli_query($con	, $query);
+			if (mysqli_query($con, $query)) {
+                                echo "<br>Number of words Updated <br>";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+			$row ="";
             if (mysqli_num_rows($result) > 0) {
+				
                 while($row = mysqli_fetch_assoc($result)) {
-                      $totalNumberOfWords += $row[words_number];
+                      $numberOfWords += $row['wordsNumber'];
                 }
-                echo "Total Number of Words:" . $totalNumberOfWords;
-            if ($totalNumberOfWords > 1000)
+              }
+                echo "Total Number of Words after DB: $numberOfWords <br>";
+            if ($numberOfWords > 1000)
             {
               /*If total number of words for the client is more than 1000 then
               the delivery date is scheduled for the next day*/
-              $date = date(j)+1;
-              $deliveryDate = $date."".date("S \of F Y") . "<br>";
+              $date1 = date("j")+1;
+              $date = $date1."".date("S \of F Y");
             }
             else {
               /*If total number of words for the client is less than 1000 then
               the delivery date is scheduled for the same day*/
-              $date = date(j);
-              $deliveryDate = $date."".date("S \of F Y") . "<br>";
+              $date1 = date("j");
+              $date = $date1."".date("S \of F Y");
             }
-            }
-            return $deliveryDate;
+
+            return $date;
         }
+		
+		
+		
+		/*If the user enters a topic which is already there 
+		then it is updated in the database
+		or else it is entered in the database 
+		along with the calculated Delivery Date*/
+		
+		$numberOfWords = $_POST['wordsNumber'];
+					$date = deliveryDate($numberOfWords);
+					echo "Date : $date";
+					$query = "SELECT id FROM `projects` WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+                    $result= mysqli_query($con,$query);
+                    if(mysqli_num_rows($result)>0)
+                    {
+                      $query = "UPDATE `projects` SET wordsNumber='$numberOfWords' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+						if (mysqli_query($con, $query)) {
+                                echo "<br>Number of words Updated <br>";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+						$query = "UPDATE `projects` SET instructions='".mysqli_real_escape_string($con, $_POST['instructions'])."' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+						if (mysqli_query($con, $query)) {
+                                echo "Instructions Updated<br>";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+						$query = "UPDATE `projects` SET date='$date' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
+						
+						if (mysqli_query($con, $query)) {
+                                echo "Date Updated<br>";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+                    }
+                    else {
+
+                            $query = "INSERT INTO `projects` (`topic`, `wordsNumber`,`instructions`,`date`) VALUES
+                                      ('".mysqli_real_escape_string($con, $_POST['topic'])."', '$numberOfWords','".mysqli_real_escape_string($con, $_POST['instructions'])."','$date')";
+                            if (mysqli_query($con, $query)) {
+                                echo "New Project added successfully";
+                              } else {
+                                echo "Error: " . $query . "<br>" . mysqli_error($con);
+                              }
+
+                          }
+		
+		
+		
     }
+	
+	
+	
+	
+					
     ?>
 
 
@@ -89,56 +158,16 @@
               <input name="topic" type="text" class="form-control" id="topic_name" placeholder="An understandable name for the topic" aria-describedby="TopicName" required>
             </div>
             <div class="form-group">
-              <label name="words_number" for="words_number">Enter Number of Words :</label>
-              <input type="number" class="form-control" id="words_number" placeholder="Eg: 1-1000" min="1" max="1000" required>
+              <label  for="wordsNumber">Enter Number of Words :</label>
+              <input type="number" name="wordsNumber" class="form-control" id="words_number" placeholder="Eg: 1-1000" min="1" max="1000" required>
             </div>
             <div class="form-group">
-              <label name="instructions" for="instructions">Additional Information/Instructions :</label>
-              <textarea class="form-control" id="instructions" rows="3"></textarea>
+              <label  for="instructions">Additional Information/Instructions :</label>
+              <textarea name="instructions" class="form-control" id="instructions" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Add Project</button>
+            <input type="submit" name="submit" value="Add Project"class="btn btn-primary">
             </form>
               <br>
-              <div>
-                <?php
-                if(array_key_exists('topic',$_POST) OR array_key_exists('words_number',$_POST))
-                {
-                  if($_POST['topic'] == "")
-                    echo "<p>Topic name is required</p>";
-                  else if($_POST['words_number'] > 1000)
-                    echo "<div class='alert alert-danger' role='alert'>
-                      <p>Mamximum Allowed words are 1000</p>
-                      </div>";
-                  else
-                  {
-                    $numberOfWords = $_POST['words_number'];
-                    $date = deliveryDate($numberOfWords);
-                    $query = "SELECT `id` FROM `projects` WHERE `topic`='".mysqli_real_escape_string($con,$_POST['topic'])."'";
-                    $result= mysqli_query($con,$query);
-                    if(mysqli_num_rows($result)>0)
-                    {
-                      echo "<p>That topic already exists!</p>";
-
-                    }
-                    else {
-
-                            $query = "INSERT INTO `projects` (`topic`, `words_number`,`instructions`,`delivery_date`) VALUES
-                                      ('".mysqli_real_escape_string($con, $_POST['topic'])."', '$numberOfWords','".mysqli_real_escape_string($con, $_POST['instructions'])."','".mysqli_real_escape_string($con, $date)."')";
-                            if (mysqli_query($con, $query)) {
-                                echo "<div class='alert alert-success' role='alert'>
-                                    <p>  New Project added successfully </p>
-                                    </div>";
-                              } else {
-                                echo "<div class='alert alert-danger' role='alert'>
-                                  <p>Error: " . $query . "<br>" . mysqli_error($con)."</p>
-                                  </div>";
-                              }
-
-                          }
-                  }
-              }
-                 ?>
-              </div>
           </div>
 
         </div>
