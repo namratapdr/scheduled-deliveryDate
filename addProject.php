@@ -55,36 +55,18 @@
 		then it is updated in the database
 		or else it is entered in the database 
 		along with the calculated Delivery Date*/
+				$numberOfWords = $_POST['wordsNumber'];
 		
-		$numberOfWords = $_POST['wordsNumber'];
-					$date = deliveryDate($numberOfWords);
-					echo "Date : $date";
 					$query = "SELECT id FROM `projects` WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
                     $result= mysqli_query($con,$query);
                     if(mysqli_num_rows($result)>0)
                     {
-                      $query = "UPDATE `projects` SET wordsNumber='$numberOfWords' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
-						if (mysqli_query($con, $query)) {
-                                echo "<br>Number of words Updated <br>";
-                              } else {
-                                echo "Error: " . $query . "<br>" . mysqli_error($con);
-                              }
-						$query = "UPDATE `projects` SET instructions='".mysqli_real_escape_string($con, $_POST['instructions'])."' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
-						if (mysqli_query($con, $query)) {
-                                echo "Instructions Updated<br>";
-                              } else {
-                                echo "Error: " . $query . "<br>" . mysqli_error($con);
-                              }
-						$query = "UPDATE `projects` SET date='$date' WHERE topic='".mysqli_real_escape_string($con,$_POST['topic'])."'";
-						
-						if (mysqli_query($con, $query)) {
-                                echo "Date Updated<br>";
-                              } else {
-                                echo "Error: " . $query . "<br>" . mysqli_error($con);
-                              }
+                      echo "<br>Project with this topic name exists<br>";
                     }
                     else {
-
+					
+					$date = deliveryDate($numberOfWords);
+					echo "Date : $date";
                             $query = "INSERT INTO `projects` (`topic`, `wordsNumber`,`instructions`,`date`) VALUES
                                       ('".mysqli_real_escape_string($con, $_POST['topic'])."', '$numberOfWords','".mysqli_real_escape_string($con, $_POST['instructions'])."','$date')";
                             if (mysqli_query($con, $query)) {
